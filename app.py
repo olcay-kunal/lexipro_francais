@@ -110,26 +110,15 @@ if not effective_api_key:
         st.image("https://via.placeholder.com/600x300?text=API+Anahtarınızı+Kopyalama", caption="Örnek: Kopyalanan API Anahtarı") # Görsel 3
         st.write("Kopyaladığınız anahtarı bir sonraki adımda uygulamaya yapıştıracaksınız.")
 
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("Şimdilik API Anahtarım Var"):
-                st.session_state.onboarding_complete = True
-                st.rerun()
-        with col2:
-            st.button("Onboarding'i Atla", on_click=lambda: st.session_state.update(onboarding_complete=True, user_api_key="GEÇİCİ_ANAHTAR_DEĞERİ_GİRİN"), help="Onboarding'i atlayarak uygulamayı test edebilirsiniz, ancak AI özellikleri çalışmayacaktır.")
-            # Note: The "GEÇİCİ_ANAHTAR_DEĞERİ_GİRİN" is just a placeholder to let the app proceed without immediate API key. User will still need to enter it.
+        if st.button("API Anahtarımı Girdim / Devam Et"):
+            st.session_state.onboarding_complete = True
+            st.rerun()
     else: # Onboarding tamamlandı ama anahtar yok
-        st.warning("Lütfen Gemini API anahtarınızı girin veya Streamlit Secrets'a ekleyin.")
+        st.warning("Lütfen Gemini API anahtarınızı girin.")
         user_input_api_key = st.text_input("Gemini API Anahtarınız", type="password")
         if user_input_api_key:
             st.session_state.user_api_key = user_input_api_key
             st.rerun()
-        
-        # Streamlit Cloud'da secret olarak ayarlamayı hatırlat
-        st.info("""
-        Uygulamayı Streamlit Cloud'da dağıtıyorsanız, API anahtarınızı `st.secrets` kullanarak ayarlamanız önerilir. 
-        `st.secrets.toml` dosyanıza `GEMINI_API_KEY = "sizin_anahtarınız"` şeklinde ekleyin.
-        """)
 else:
     # --- Yan Panel (Sidebar) ---
     with st.sidebar:
