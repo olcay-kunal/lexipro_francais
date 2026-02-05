@@ -94,7 +94,7 @@ if not effective_api_key:
 
         st.markdown("### Adım 1: Google AI Studio'ya Giriş Yapın")
         st.write("Google hesabınızla [Google AI Studio](https://aistudio.google.com/app/apikey) adresine gidin.")
-        st.image("https://via.placeholder.com/600x300?text=Google+AI+Studio+Giriş+Ekranı", caption="Örnek: Google AI Studio Giriş Ekranı") # Görsel 1
+        st.image("https://raw.githubusercontent.com/olcay-kunal/lexipro_francais/main/1.png", caption="Örnek: Google AI Studio Giriş Ekranı") # Görsel 1
         st.write("Hesabınıza giriş yaptıktan sonra veya zaten girişliyseniz, API Anahtarları sayfasına yönlendirileceksiniz.")
 
         st.markdown("### Adım 2: Yeni Bir API Anahtarı Oluşturun")
@@ -102,12 +102,12 @@ if not effective_api_key:
         API Anahtarları sayfasında, 'API anahtarı oluştur' (Create API key) düğmesini arayın ve tıklayın.
         Mevcut bir anahtarınız varsa onu da kullanabilirsiniz.
         """)
-        st.image("https://via.placeholder.com/600x300?text=API+Anahtarı+Oluştur+Ekranı", caption="Örnek: Yeni API Anahtarı Oluşturma") # Görsel 2
+        st.image("https://raw.githubusercontent.com/olcay-kunal/lexipro_francais/main/2.png", caption="Örnek: Yeni API Anahtarı Oluşturma") # Görsel 2
         st.write("Anahtarınız otomatik olarak oluşturulacak ve size gösterilecektir.")
         
         st.markdown("### Adım 3: API Anahtarınızı Kopyalayın")
         st.write("Oluşturulan anahtarı kopyala düğmesine tıklayarak kopyalayın. Bu anahtarı kimseyle paylaşmayın ve güvenli bir yerde saklayın.")
-        st.image("https://via.placeholder.com/600x300?text=API+Anahtarınızı+Kopyalama", caption="Örnek: Kopyalanan API Anahtarı") # Görsel 3
+        st.image("https://raw.githubusercontent.com/olcay-kunal/lexipro_francais/main/3.png", caption="Örnek: Kopyalanan API Anahtarı") # Görsel 3
         st.write("Kopyaladığınız anahtarı bir sonraki adımda uygulamaya yapıştıracaksınız.")
 
         if st.button("API Anahtarımı Girdim / Devam Et"):
