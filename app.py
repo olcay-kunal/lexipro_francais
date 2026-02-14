@@ -108,21 +108,33 @@ st.markdown("""
     }
     
     /* Butonlar İçin Yüksek Görünürlük */
-    .stButton > button {
-        background-color: #1e293b !important;
+    .stButton > button, 
+    [data-testid="stBaseButton-primary"],
+    section[data-testid="stSidebar"] .stButton > button {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
         color: #ffffff !important;
         border: none !important;
         font-weight: 700 !important;
         width: 100%;
         padding: 0.75rem !important;
         border-radius: 12px !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
     }
-    .stButton > button:hover {
-        background-color: #334155 !important;
+    
+    .stButton > button:hover,
+    [data-testid="stBaseButton-primary"]:hover,
+    section[data-testid="stSidebar"] .stButton > button:hover {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
         transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        color: #ffffff !important;
+    }
+    
+    .stButton > button:active {
+        transform: translateY(0px);
     }
 
     /* Kelime Kartları */
