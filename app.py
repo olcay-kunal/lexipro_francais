@@ -77,72 +77,82 @@ st.markdown("""
         background-color: #f8f9fa;
     }
     
-    /* Başlık Renkleri */
-    h1, h2, h3, .stMarkdown p, .stCaption {
-        color: #1e293b !important;
+    /* Genel Metin Renkleri */
+    h1, h2, h3, h4, .stMarkdown p, .stCaption, label, [data-testid="stHeader"] {
+        color: #0f172a !important;
     }
 
-    /* Sidebar Yazıları */
-    section[data-testid="stSidebar"] .stMarkdown p, 
+    /* Sidebar İçin Kritik Düzeltme */
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p, 
+    section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] h1, 
     section[data-testid="stSidebar"] h2, 
     section[data-testid="stSidebar"] h3,
-    section[data-testid="stSidebar"] label {
-        color: #1e293b !important;
+    section[data-testid="stSidebar"] h4,
+    section[data-testid="stSidebar"] .stMetric label,
+    section[data-testid="stSidebar"] .stMetric div[data-testid="stMetricValue"] {
+        color: #0f172a !important;
+        font-weight: 600 !important;
+    }
+
+    /* Token Metrikleri */
+    div[data-testid="stMetricValue"] {
+        color: #2563eb !important; /* Mavi tonu */
     }
     
     /* Sidebar Arka Planı */
     section[data-testid="stSidebar"] {
         background-color: #ffffff !important;
-        border-right: 1px solid #e2e8f0;
+        border-right: 1px solid #cbd5e1;
     }
     
+    /* Butonlar İçin Yüksek Görünürlük */
+    .stButton > button {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: none !important;
+        font-weight: 700 !important;
+        width: 100%;
+        padding: 0.75rem !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .stButton > button:hover {
+        background-color: #334155 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    }
+
     /* Kelime Kartları */
     .vocab-card {
         background: #ffffff;
         padding: 1.5rem;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        border: 1px solid #f1f5f9;
-        margin-bottom: 1rem;
-        transition: all 0.2s ease-in-out;
+        border-radius: 20px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 1.5rem;
     }
-    
-    .vocab-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-
     .vocab-card h3 {
-        color: #0f172a !important;
-        margin-top: 5px;
-    }
-    
-    /* Kategori Etiketleri */
-    .tag {
-        padding: 4px 12px;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-    }
-    .tag-nom { background-color: #dbeafe; color: #1e40af; }
-    .tag-verbe { background-color: #dcfce7; color: #166534; }
-    .tag-adj { background-color: #fef3c7; color: #92400e; }
-    .tag-adv { background-color: #f3e8ff; color: #6b21a8; }
-    .tag-str { background-color: #f1f5f9; color: #475569; }
-    
-    /* Butonlar */
-    .stButton > button {
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        transition: all 0.2s;
+        color: #1e293b !important;
+        font-weight: 700 !important;
     }
     
     /* Input Alanları */
-    .stTextInput input, .stSelectbox select {
-        border-radius: 8px !important;
+    .stTextInput input, .stSelectbox [data-baseweb="select"] {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 10px !important;
+    }
+    
+    /* Sekme Başlıkları (Tabs) */
+    button[data-baseweb="tab"] p {
+        color: #475569 !important;
+        font-weight: 600 !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"] p {
+        color: #1e293b !important;
     }
     </style>
     """, unsafe_allow_html=True)
