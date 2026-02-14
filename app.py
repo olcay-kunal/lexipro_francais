@@ -4,6 +4,7 @@ import pandas as pd
 import json
 import os
 from datetime import datetime
+import streamlit.components.v1 as components
 
 # --- Sabitler ---
 CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
@@ -18,34 +19,107 @@ THEMES_BY_LEVEL = {
 
 # --- Fonksiyonlar ---
 def generate_vocabulary(level, theme, api_key_func):
-    genai.configure(api_key=api_key_func) # Fonksiyon içinde yapılandırma
-    model = genai.GenerativeModel('gemini-flash-latest') # Kullanıcı tarafından seçilen model
-    prompt = f"""Génère une liste exhaustive de vocabulaire français pour le niveau {level} sur le thème "{theme}". 
+    if not api_key_func:
+        return []
+    
+    genai.configure(api_key=api_key_func)
+    model = genai.GenerativeModel('gemini-flash-latest') # Geri dönüldü: gemini-flash-latest
+    prompt = f"""Génère une liste de vocabulaire français pour le niveau {level} sur le thème "{theme}". 
     Réponds EXCLUSIVEMENT sous forme de liste JSON. Her öğe şu alanları içermeli:
     term, category (Nom, Verbe, Adjectif, Adverbe, Structure/Expression), definition (en français), english, turkish, example1 (français), example2 (français)."""
     
     try:
         response = model.generate_content(prompt)
-        # Token kullanımını güncelle
         if hasattr(response, 'usage_metadata'):
             st.session_state.last_input_tokens = response.usage_metadata.prompt_token_count
             st.session_state.last_output_tokens = response.usage_metadata.candidates_token_count
             st.session_state.total_input_tokens += st.session_state.last_input_tokens
             st.session_state.total_output_tokens += st.session_state.last_output_tokens
         
-        # JSON temizleme (bazı durumlarda model markdown blokları ekleyebilir)
         text = response.text.strip()
         if "```json" in text:
             text = text.split("```json")[1].split("```")[0].strip()
         return json.loads(text)
     except Exception as e:
-        st.error(f"Kelime üretilirken bir hata oluştu: {str(e)}. Lütfen API anahtarınızın doğru olduğundan ve kota limitlerinizi aşmadığınızdan emin olun.")
+        error_msg = str(e)
+        if "API_KEY_INVALID" in error_msg:
+            st.error("⚠️ API Anahtarı Geçersiz: Lütfen girdiğiniz anahtarı kontrol edin.")
+        elif "quota" in error_msg.lower():
+            st.error("⚠️ Kota Sınırı: API kullanım limitine ulaştınız.")
+        else:
+            st.error(f"❌ Bir hata oluştu: {error_msg}")
         return []
 
-# --- Arayüz ---
+def speak_text(text):
+    """Browser tabanlı TTS için HTML/JS bileşeni"""
+    js_code = f"""
+    <script>
+        var msg = new SpeechSynthesisUtterance('{text}');
+        msg.lang = 'fr-FR';
+        window.speechSynthesis.speak(msg);
+    </script>
+    """
+    components.html(js_code, height=0, width=0)
+
+# --- Arayüz Yapılandırması ---
 st.set_page_config(page_title="LexiPro Français - CECRL", page_icon="🇫🇷", layout="wide")
+
+# --- Premium UI CSS ---
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap');
+    
+    * { font-family: 'Outfit', sans-serif; }
+    
+    .stApp {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+    
+    /* Sidebar Styling */
+    section[data-testid="stSidebar"] {
+        background-color: #ffffff;
+        border-right: 1px solid #dee2e6;
+        padding-top: 2rem;
+    }
+    
+    /* Card Design */
+    .vocab-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #f1f3f5;
+        margin-bottom: 1rem;
+        transition: transform 0.2s;
+    }
+    .vocab-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+    
+    /* Category Tags */
+    .tag {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: 5px;
+    }
+    .tag-nom { background: #e7f5ff; color: #1971c2; }
+    .tag-verbe { background: #ebfbee; color: #2b8a3e; }
+    .tag-adj { background: #fff4e6; color: #d9480f; }
+    
+    /* Button Effects */
+    .stButton > button {
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 st.title("🇫🇷 LexiPro Français")
-st.caption("Expertise CECRL - Kelime Dağarcığı ve AI Tütör")
+st.caption("Expertise CECRL - Premium Yapay Zeka Tütörü")
 
 # --- Oturum Durumu Başlatma ---
 if 'onboarding_complete' not in st.session_state:
@@ -150,16 +224,42 @@ else:
 
     # Ana İçerik
     if st.session_state.vocab_list:
-        tab1, tab2 = st.tabs(["📚 Kelime Tablosu", "💬 AI Tütör ile Pratik"])
+        tab1, tab2 = st.tabs(["📚 Kelime Keşfi", "💬 AI Tütör ile Pratik"])
         
         with tab1:
+            st.markdown("### 🔍 Kelime Listesi")
             df = pd.DataFrame(st.session_state.vocab_list)
-            st.dataframe(df, use_container_width=True)
+            
+            # Kart Görünümü (Premium UI)
+            cols = st.columns(2)
+            for idx, item in enumerate(st.session_state.vocab_list):
+                with cols[idx % 2]:
+                    cat_class = f"tag-{item.get('category', '').lower()[:3]}"
+                    st.markdown(f"""
+                        <div class="vocab-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <span class="tag {cat_class}">{item.get('category', 'Kelime')}</span>
+                                    <h3 style="margin: 10px 0; color: #2c3e50;">{item.get('term')}</h3>
+                                </div>
+                            </div>
+                            <p style="color: #6c757d; font-style: italic;">{item.get('definition')}</p>
+                            <p><b>🇹🇷:</b> {item.get('turkish')} | <b>🇬🇧:</b> {item.get('english')}</p>
+                            <p style="background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 0.9rem;">
+                                💡 <i>{item.get('example1')}</i>
+                            </p>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    if st.button(f"🔊 Dinle: {item.get('term')}", key=f"speak_{idx}"):
+                        speak_text(item.get('term'))
+
+            with st.expander("📊 Tablo Görünümü"):
+                st.dataframe(df, use_container_width=True)
             
             # CSV İndirme
             csv = df.to_csv(index=False).encode('utf-8')
             st.download_button(
-                "Listeyi CSV Olarak İndir",
+                "📥 Listeyi CSV Olarak İndir",
                 csv,
                 f"vocabulaire_{level}_{final_theme}.csv",
                 "text/csv",
@@ -199,17 +299,30 @@ else:
                 with st.chat_message("assistant"):
                     # API anahtarını send_message'dan önce yapılandır
                     genai.configure(api_key=effective_api_key)
-                    response = st.session_state.chat_session.send_message(prompt)
-                    
-                    # Token kullanımını güncelle
-                    if hasattr(response, 'usage_metadata'):
-                        st.session_state.last_input_tokens = response.usage_metadata.prompt_token_count
-                        st.session_state.last_output_tokens = response.usage_metadata.candidates_token_count
-                        st.session_state.total_input_tokens += st.session_state.last_input_tokens
-                        st.session_state.total_output_tokens += st.session_state.last_output_tokens
-                    
-                    st.markdown(response.text)
-                    st.session_state.chat_history.append({"role": "assistant", "content": response.text})
+                    try:
+                        response = st.session_state.chat_session.send_message(prompt)
+                        
+                        # Token kullanımını güncelle
+                        if hasattr(response, 'usage_metadata'):
+                            st.session_state.last_input_tokens = response.usage_metadata.prompt_token_count
+                            st.session_state.last_output_tokens = response.usage_metadata.candidates_token_count
+                            st.session_state.total_input_tokens += st.session_state.last_input_tokens
+                            st.session_state.total_output_tokens += st.session_state.last_output_tokens
+                        
+                        st.markdown(response.text)
+                        st.session_state.chat_history.append({"role": "assistant", "content": response.text})
+                    except Exception as e:
+                        st.error("⚠️ Mesaj gönderilirken bir hata oluştu. Lütfen bağlantınızı veya API anahtarınızı kontrol edin.")
+            
+            # Sohbeti İndir
+            if st.session_state.chat_history:
+                chat_text = "\n".join([f"{m['role'].upper()}: {m['content']}" for m in st.session_state.chat_history])
+                st.download_button(
+                    "📄 Sohbet Geçmişini İndir (.txt)",
+                    chat_text,
+                    f"lexipro_chat_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+                    "text/plain"
+                )
     else:
         st.info("Sol taraftan bir seviye ve tema seçerek başlayın.")
 
