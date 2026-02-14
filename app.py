@@ -5,6 +5,8 @@ import json
 import os
 from datetime import datetime
 import streamlit.components.v1 as components
+from gtts import gTTS
+import io
 
 # --- Sabitler ---
 CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
@@ -51,15 +53,14 @@ def generate_vocabulary(level, theme, api_key_func):
         return []
 
 def speak_text(text):
-    """Browser tabanlı TTS için HTML/JS bileşeni"""
-    js_code = f"""
-    <script>
-        var msg = new SpeechSynthesisUtterance('{text}');
-        msg.lang = 'fr-FR';
-        window.speechSynthesis.speak(msg);
-    </script>
-    """
-    components.html(js_code, height=0, width=0)
+    """Google TTS (gTTS) kullanarak ses üretir ve çalar"""
+    try:
+        tts = gTTS(text=text, lang='fr')
+        fp = io.BytesIO()
+        tts.write_to_fp(fp)
+        st.audio(fp, format="audio/mp3", autoplay=True)
+    except Exception as e:
+        st.error(f"Ses üretilemedi: {e}")
 
 # --- Arayüz Yapılandırması ---
 st.set_page_config(page_title="LexiPro Français - CECRL", page_icon="🇫🇷", layout="wide")
