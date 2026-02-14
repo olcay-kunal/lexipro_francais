@@ -69,57 +69,91 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap');
     
-    * { font-family: 'Outfit', sans-serif; }
+    * { 
+        font-family: 'Outfit', sans-serif; 
+    }
     
     .stApp {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background-color: #f8f9fa;
     }
     
-    /* Sidebar Styling */
+    /* Başlık Renkleri */
+    h1, h2, h3, .stMarkdown p, .stCaption {
+        color: #1e293b !important;
+    }
+
+    /* Sidebar Yazıları */
+    section[data-testid="stSidebar"] .stMarkdown p, 
+    section[data-testid="stSidebar"] h1, 
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] label {
+        color: #1e293b !important;
+    }
+    
+    /* Sidebar Arka Planı */
     section[data-testid="stSidebar"] {
-        background-color: #ffffff;
-        border-right: 1px solid #dee2e6;
-        padding-top: 2rem;
+        background-color: #ffffff !important;
+        border-right: 1px solid #e2e8f0;
     }
     
-    /* Card Design */
+    /* Kelime Kartları */
     .vocab-card {
-        background: white;
+        background: #ffffff;
         padding: 1.5rem;
         border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        border: 1px solid #f1f3f5;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid #f1f5f9;
         margin-bottom: 1rem;
-        transition: transform 0.2s;
-    }
-    .vocab-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        transition: all 0.2s ease-in-out;
     }
     
-    /* Category Tags */
+    .vocab-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .vocab-card h3 {
+        color: #0f172a !important;
+        margin-top: 5px;
+    }
+    
+    /* Kategori Etiketleri */
     .tag {
         padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        margin-right: 5px;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
     }
-    .tag-nom { background: #e7f5ff; color: #1971c2; }
-    .tag-verbe { background: #ebfbee; color: #2b8a3e; }
-    .tag-adj { background: #fff4e6; color: #d9480f; }
+    .tag-nom { background-color: #dbeafe; color: #1e40af; }
+    .tag-verbe { background-color: #dcfce7; color: #166534; }
+    .tag-adj { background-color: #fef3c7; color: #92400e; }
+    .tag-adv { background-color: #f3e8ff; color: #6b21a8; }
+    .tag-str { background-color: #f1f5f9; color: #475569; }
     
-    /* Button Effects */
+    /* Butonlar */
     .stButton > button {
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.3s;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s;
+    }
+    
+    /* Input Alanları */
+    .stTextInput input, .stSelectbox select {
+        border-radius: 8px !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🇫🇷 LexiPro Français")
-st.caption("Expertise CECRL - Premium Yapay Zeka Tütörü")
+# Başlık Kısmını Düzenle
+col1, col2 = st.columns([1, 10])
+with col1:
+    st.markdown("<h1 style='margin-top: -10px;'>🇫🇷</h1>", unsafe_allow_html=True)
+with col2:
+    st.markdown("<h1 style='color: #1e293b; margin-bottom: 0px;'>LexiPro Français</h1>", unsafe_allow_html=True)
+st.markdown("<p style='color: #64748b; font-size: 1.1rem; margin-top: -15px;'>CECRL Expertise - Premium Yapay Zeka Tütörü</p>", unsafe_allow_html=True)
 
 # --- Oturum Durumu Başlatma ---
 if 'onboarding_complete' not in st.session_state:
